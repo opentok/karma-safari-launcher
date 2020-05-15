@@ -1,19 +1,19 @@
-var wd = require('wd');
-var url = require('url');
+const wd = require('wd');
+const url = require('url');
 
-var Safari = function(baseBrowserDecorator, args, logger) {
+const Safari = function(baseBrowserDecorator, args, logger) {
   baseBrowserDecorator(this);
 
-  var config = Object.assign({
+  const config = Object.assign({
     protocol: 'http:',
     hostname: '127.0.0.1',
     port: 4444,
     pathname: '/'
   }, args.config);
 
-  var webDriver = url.format(config);
+  const webDriver = url.format(config);
   this.name = 'Safari via WebDriver at ' + webDriver;
-  var log = logger.create(this.name);
+  const log = logger.create(this.name);
 
   log.debug(JSON.stringify(args));
   log.debug(JSON.stringify(config));
@@ -52,9 +52,9 @@ var Safari = function(baseBrowserDecorator, args, logger) {
    * @param {string} url The URL that the Karma server is listening on.
    */
   this.on('start', function(url) {
-    var self = this;
+    const self = this;
 
-    var attempts = 0;
+    const attempts = 0;
     // TODO: It would be nice if this was configurable
     const MAX_ATTEMPTS = 10;
     // TODO: It would be nice if this was configurable
@@ -115,16 +115,16 @@ Safari.prototype = {
 
 Safari.$inject = ['baseBrowserDecorator', 'args', 'logger'];
 
-var SafariLegacy = function(baseBrowserDecorator) {
+const SafariLegacy = function(baseBrowserDecorator) {
   baseBrowserDecorator(this);
 
   this._start = function(url) {
-    var HTML_TPL = path.normalize(__dirname + '/safari.html');
-    var self = this;
+    const HTML_TPL = path.normalize(__dirname + '/safari.html');
+    const self = this;
 
     fs.readFile(HTML_TPL, function(err, data) {
-      var content = data.toString().replace('%URL%', url);
-      var staticHtmlPath = self._tempDir + '/redirect.html';
+      const content = data.toString().replace('%URL%', url);
+      const staticHtmlPath = self._tempDir + '/redirect.html';
 
       fs.writeFile(staticHtmlPath, content, function(err) {
         self._execCommand(self._getCommand(), [staticHtmlPath]);
