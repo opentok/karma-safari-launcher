@@ -1,7 +1,7 @@
 const wd = require('wd');
 const url = require('url');
 
-const Safari = function(baseBrowserDecorator, args, logger) {
+const SafariWithWebDriver = function(baseBrowserDecorator, args, logger) {
   baseBrowserDecorator(this);
 
   const config = Object.assign({
@@ -104,6 +104,8 @@ const Safari = function(baseBrowserDecorator, args, logger) {
   });
 };
 
+const Safari = new SafariWithWebDriver();
+
 Safari.prototype = {
   name: 'Safari',
 
@@ -114,6 +116,19 @@ Safari.prototype = {
 };
 
 Safari.$inject = ['baseBrowserDecorator', 'args', 'logger'];
+
+const SafariTechPreview = new SafariWithWebDriver();
+
+SafariTechPreview.prototype = {
+  name: 'SafariTechPreview',
+
+  DEFAULT_CMD: {
+    darwin: '/Applications/Safari Technology Preview.app/Contents/MacOS/safaridriver',
+  },
+  ENV_CMD: 'SAFARI_TECHPREVIEW_BIN'
+};
+
+SafariTechPreview.$inject = ['baseBrowserDecorator', 'args', 'logger'];
 
 const SafariLegacy = function(baseBrowserDecorator) {
   baseBrowserDecorator(this);
@@ -148,5 +163,6 @@ SafariLegacy.$inject = ['baseBrowserDecorator'];
 // PUBLISH DI MODULE
 module.exports = {
   'launcher:Safari': ['type', Safari],
-  'launcher:SafariLegacy': ['type', SafariLegacy]
+  'launcher:SafariLegacy': ['type', SafariLegacy],
+  'launcher:SafariTechPreview': ['type', SafariTechPreview],
 };
