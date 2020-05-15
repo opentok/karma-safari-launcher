@@ -36,7 +36,7 @@ const Safari = function(baseBrowserDecorator, args, logger) {
     return [
       "-p", config.port.toString()
     ];
-  }
+  };
 
   const superStart = this._start;
   // Stop the default start from occuring
