@@ -1,7 +1,7 @@
 const wd = require('wd');
 const url = require('url');
 
-const SafariWebDriverDecoratorFactory = function(opts) {
+const WebDriverDecoratorFactory = function(props = {}) {
   const decorator = function(baseBrowserDecorator, args, logger) {
     baseBrowserDecorator(this);
 
@@ -13,7 +13,8 @@ const SafariWebDriverDecoratorFactory = function(opts) {
     }, args.config);
 
     const webDriver = url.format(config);
-    this.name = 'Safari via WebDriver at ' + webDriver;
+    const browserName = props.name;
+    this.name = browserName + ' via WebDriver at ' + webDriver;
     const log = logger.create(this.name);
 
     log.debug(JSON.stringify(args));
@@ -82,10 +83,10 @@ const SafariWebDriverDecoratorFactory = function(opts) {
             self.driver.init(webDriverConfig, attachKarma);
           }, SLEEP_DURATION);
         } else if (error) {
-          log.error('Could not connect to Safari.');
+          log.error('Could not connect to ' + browserName);
           log.error(error);
         } else {
-          log.debug('Connected to Safari WebDriver');
+          log.debug('Connected to ' + browserName + 'WebDriver');
           log.debug('Connecting to ' + url);
           self.driver.get(url);
         }
@@ -105,14 +106,13 @@ const SafariWebDriverDecoratorFactory = function(opts) {
     });
   };
 
-  Object.keys(opts).forEach(k => {
-    decorator.prototype[k] = opts[k];
-  });
+  decorator.prototype = props;
+  decorator.$inject = ['baseBrowserDecorator', 'args', 'logger'];
 
   return decorator;
 };
 
-const Safari = SafariWebDriverDecoratorFactory({
+const Safari = WebDriverDecoratorFactory({
   name: 'Safari',
   DEFAULT_CMD: {
     darwin: '/usr/bin/safaridriver',
@@ -120,17 +120,13 @@ const Safari = SafariWebDriverDecoratorFactory({
   ENV_CMD: 'SAFARI_BIN',
 });
 
-Safari.$inject = ['baseBrowserDecorator', 'args', 'logger'];
-
-const SafariTechPreview = SafariWebDriverDecoratorFactory({
+const SafariTechPreview = WebDriverDecoratorFactory({
   name: 'SafariTechPreview',
   DEFAULT_CMD: {
     darwin: '/Applications/Safari Technology Preview.app/Contents/MacOS/safaridriver',
   },
   ENV_CMD: 'SAFARI_TECHPREVIEW_BIN',
 });
-
-SafariTechPreview.$inject = ['baseBrowserDecorator', 'args', 'logger'];
 
 const SafariLegacy = function(baseBrowserDecorator) {
   baseBrowserDecorator(this);
